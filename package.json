@@ -1,0 +1,23 @@
+{
+  "name": "aoc22",
+  "version": "1.0.0",
+  "description": "run with",
+  "main": "index.js",
+  "private": "true",
+  "scripts": {
+    "test": "node ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charlieharutaka/aoc22.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/charlieharutaka/aoc22/issues"
+  },
+  "homepage": "https://github.com/charlieharutaka/aoc22#readme",
+  "dependencies": {
+    "glob": "^8.0.3"
+  }
+}
