@@ -49,7 +49,7 @@ async function loadWasmUtils(importObject) {
   try {
     const inputBuffer = await fs.readFile(inputFile);
     const inputByteBuffer = new Uint8Array(inputBuffer);
-    const inputOffset = 0x8000; // 32KB data size
+    const inputOffset = 0x2000; // 8KB data section size
     const inputLength = inputBuffer.byteLength;
 
     const wasmBuffer = await fs.readFile(wasmFile);
