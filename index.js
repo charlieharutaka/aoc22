@@ -62,6 +62,7 @@ async function loadWasmUtils(importObject) {
     const importObject = {
       js: {
         mem: wasmMemory,
+        putchar: (x) => console.log(x),
       },
       global: {
         inputOffset: new WebAssembly.Global({ value: "i32" }, inputOffset),
