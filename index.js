@@ -5,9 +5,11 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 const glob = util.promisify(require("glob"));
 const exec = util.promisify(childProcess.exec);
+const { performance } = require("node:perf_hooks");
 
 async function convertWasm() {
-  for (const inputFile of await glob("**/*.wat")) {
+  const inputFiles = await glob("**/*.wat");
+  for (const inputFile of inputFiles) {
     const inputPath = path.parse(inputFile);
     const outputPath = { ...inputPath, base: "", ext: ".wasm" };
     const outputFile = path.format(outputPath);
@@ -20,12 +22,15 @@ async function convertWasm() {
       process.exit(1);
     }
   }
+  return inputFiles.length;
 }
 
 async function clearWasm() {
-  for (const target of await glob("**/*.wasm")) {
+  const targets = await glob("**/*.wasm");
+  for (const target of targets) {
     await fs.rm(target);
   }
+  return targets.length;
 }
 
 async function loadWasmUtils(importObject) {
@@ -62,7 +67,7 @@ async function loadWasmUtils(importObject) {
     const importObject = {
       js: {
         mem: wasmMemory,
-        putchar: (x) => console.log(x),
+        putchar: (x) => console.log(x.toString()),
       },
       global: {
         inputOffset: new WebAssembly.Global({ value: "i32" }, inputOffset),
@@ -78,8 +83,18 @@ async function loadWasmUtils(importObject) {
       })
     ).instance.exports;
 
-    console.log(`Part 1: ${part1()}`);
-    console.log(`Part 2: ${part2()}`);
+    performance.mark("execute:part1");
+    console.log(
+      `Part 1: ${part1()} (${(
+        performance.measure("", "execute:part1").duration * 1000
+      ).toFixed(2)}us)`
+    );
+    performance.mark("execute:part2");
+    console.log(
+      `Part 2: ${part2()} (${(
+        performance.measure("", "execute:part2").duration * 1000
+      ).toFixed(2)}us)`
+    );
   } catch (error) {
     if (error.code === "ENOENT") {
       console.log("=== ERROR ===");

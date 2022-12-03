@@ -224,6 +224,279 @@
     ) unreachable)
     local.get $r
   )
+  (func $string2bitset (param $array i32) (param $length i32) (result i64)
+    ;; subtract 65 from each char. then each char becomes:
+    ;; A = 0 -> Z = 25, garbage, a = 32 -> z = 57 
+    ;; these can index bits in an i64
+    (local $set i64)
+    (local $i i32)
+    (local $vector v128)
+    (local $numElem i32)
+
+    i32.const 0
+    local.set $i
+    i64.const 0
+    local.set $set
+
+    ;; use v128 to subtract 65 from each element
+    (loop
+      ;; load array1[i..i+16]
+      local.get $i
+      local.get $array
+      i32.add
+      v128.load
+      i32.const 65
+      i8x16.splat
+      i8x16.sub
+      local.set $vector
+
+      ;; figure out where to stop grabbing garbage from the vector
+      local.get $length
+      local.get $i
+      i32.sub
+      local.set $numElem
+
+      ;; insanity
+      (block
+        local.get $set
+        i32.const 0
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 0
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 1
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 1
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 2
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 2
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 3
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 3
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 4
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 4
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 5
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 5
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 6
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 6
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 7
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 7
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 8
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 8
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 9
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 9
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 10
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 10
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 11
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 11
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 12
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 12
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 13
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 13
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 14
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 14
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.tee $set
+        i32.const 15
+        local.get $numElem
+        i32.ge_u
+        br_if 0
+        i64.const 1
+        local.get $vector
+        i8x16.extract_lane_u 15
+        i64.extend_i32_u
+        i64.shl
+        i64.or
+        local.set $set
+      )
+      
+      ;; add 16 to i
+      i32.const 16
+      local.get $i
+      i32.add
+      local.tee $i
+
+      ;; loop if not out of bound
+      local.get $length
+      i32.lt_u
+      br_if 0
+    )
+    
+    local.get $set
+  )
+  (func $commonChar2 (param $array1 i32) (param $array1len i32) (param $array2 i32) (param $array2len i32) (result i64)
+    ;; subtract 65 from each char. then each char becomes:
+    ;; A = 0 -> Z = 25, garbage, a = 32 -> z = 57 
+    ;; these can index bits in an i64
+    (local $setA i64)
+    (local $setB i64)
+    (local $score i64)
+
+    local.get $array1
+    local.get $array1len
+    call $string2bitset
+    local.tee $setA
+    local.get $array2
+    local.get $array2len
+    call $string2bitset
+    local.tee $setB
+    i64.and
+
+    ;; get score using CTZ
+    i64.ctz
+    local.tee $score
+    ;; if 0 < ctz < 32, add 27
+    ;; else subtract 31
+    i64.const 0
+    i64.ge_u
+    local.get $score
+    i64.const 32
+    i64.lt_u
+    i32.and
+    (if
+      (then
+        local.get $score
+        i64.const 27
+        i64.add
+        local.set $score
+      )
+      (else
+        local.get $score
+        i64.const 31
+        i64.sub
+        local.set $score
+      )
+    )
+
+    local.get $score
+  )
   (func (export "part1") (result i64)
     (local $i i32)
     (local $lineStart i32)
@@ -267,8 +540,8 @@
         local.get $lineHalfLength
         local.get $lineMidpoint
         local.get $lineHalfLength
-        call $commonChar
-        call $getPriority
+        call $commonChar2
+        ;; call $getPriority
 
         local.get $ret
         i64.add
