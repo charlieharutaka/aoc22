@@ -83,17 +83,46 @@ async function loadWasmUtils(importObject) {
       })
     ).instance.exports;
 
+    // warmup
+    performance.mark("warmup:part1");
+    for (let i = 0; i < 10; i++) part1();
+    performance.mark("warmup:part1:complete");
+    const warmup1Duration = performance.measure(
+      "",
+      "warmup:part1",
+      "warmup:part1:complete"
+    ).duration;
+    console.log(`Part 1 Warmup: ${(warmup1Duration * 1000).toFixed(2)}us`);
     performance.mark("execute:part1");
+    const part1result = part1();
+    performance.mark("finish:part1");
+    const part1duration = performance.measure(
+      "",
+      "execute:part1",
+      "finish:part1"
+    ).duration;
     console.log(
-      `Part 1: ${part1()} (${(
-        performance.measure("", "execute:part1").duration * 1000
-      ).toFixed(2)}us)`
+      `Part 1: ${part1result} (${(part1duration * 1000).toFixed(2)}us)`
     );
+    performance.mark("warmup:part2");
+    for (let i = 0; i < 10; i++) part2();
+    performance.mark("warmup:part2:complete");
+    const warmup2Duration = performance.measure(
+      "",
+      "warmup:part2",
+      "warmup:part2:complete"
+    ).duration;
+    console.log(`Part 2 Warmup: ${(warmup2Duration * 1000).toFixed(2)}us`);
     performance.mark("execute:part2");
+    const part2result = part2();
+    performance.mark("finish:part2");
+    const part2duration = performance.measure(
+      "",
+      "execute:part2",
+      "finish:part2"
+    ).duration;
     console.log(
-      `Part 2: ${part2()} (${(
-        performance.measure("", "execute:part2").duration * 1000
-      ).toFixed(2)}us)`
+      `Part 2: ${part2result} (${(part2duration * 1000).toFixed(2)}us)`
     );
   } catch (error) {
     if (error.code === "ENOENT") {

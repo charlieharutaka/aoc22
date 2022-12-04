@@ -451,6 +451,53 @@
     
     local.get $set
   )
+  (func $string2bitset2 (param $array i32) (param $length i32) (result i64)
+    (local $set i64)
+    (local $i i32)
+
+    i32.const 0
+    local.set $i
+    i64.const 0
+    local.set $set
+    
+    (block (loop
+      ;; break if ge length
+      local.get $i
+      local.get $length
+      i32.ge_u
+      br_if 1
+
+      ;; prepare stack for shl
+      i64.const 1
+
+      ;; load array[i]
+      local.get $i
+      local.get $array
+      i32.add
+      i64.load8_u
+
+      ;; subtract 65
+      i64.const 65
+      i64.sub
+
+      ;; left shift by result
+      i64.shl
+
+      ;; set bit
+      local.get $set
+      i64.or
+      local.set $set
+
+      ;; increment i and loop
+      local.get $i
+      i32.const 1
+      i32.add
+      local.set $i
+      br 0
+    ) unreachable)
+
+    local.get $set
+  )
   (func $commonChar2 (param $array1 i32) (param $array1len i32) (param $array2 i32) (param $array2len i32) (result i64)
     ;; subtract 65 from each char. then each char becomes:
     ;; A = 0 -> Z = 25, garbage, a = 32 -> z = 57 
@@ -568,7 +615,7 @@
     (local $line3start i32)
     (local $line3length i32)
     (local $ret i64)
-    (local $tmp i32)
+    (local $tmp i64)
 
     i64.const 0
     local.set $ret
@@ -634,13 +681,44 @@
         ;; find common char of all 3 lines
         local.get $line1start
         local.get $line1length
+        call $string2bitset
         local.get $line2start
         local.get $line2length
+        call $string2bitset
         local.get $line3start
         local.get $line3length
-        call $commonCharOf3
-        call $getPriority
+        call $string2bitset
+        
+        i64.and
+        i64.and
 
+        ;; get score using CTZ
+        i64.ctz
+        local.tee $tmp
+        ;; if 0 < ctz < 32, add 27
+        ;; else subtract 31
+        i64.const 0
+        i64.ge_u
+        local.get $tmp
+        i64.const 32
+        i64.lt_u
+        i32.and
+        (if
+          (then
+            local.get $tmp
+            i64.const 27
+            i64.add
+            local.set $tmp
+          )
+          (else
+            local.get $tmp
+            i64.const 31
+            i64.sub
+            local.set $tmp
+          )
+        )
+
+        local.get $tmp
         local.get $ret
         i64.add
         local.set $ret
