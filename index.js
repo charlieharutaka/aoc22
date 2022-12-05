@@ -122,7 +122,7 @@ async function loadWasmUtils(importObject) {
       "finish:part2"
     ).duration;
     console.log(
-      `Part 2: ${part2result} (${(part2duration * 1000).toFixed(2)}us)`
+      `Part 2: ${part2result.toString()} (${(part2duration * 1000).toFixed(2)}us)`
     );
   } catch (error) {
     if (error.code === "ENOENT") {
