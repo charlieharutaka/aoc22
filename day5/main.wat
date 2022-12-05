@@ -14,7 +14,7 @@
   ;; stack layout
   ;; first 4 bytes are i32 describing top of stack
   ;; 0x00 0x01 0x02 0x03 0x04 0x05 ... 0xnElem - 4  0xnElem - 3 ... 0x80
-  ;; <- i32 nElem ->     s0   s1   ... s(nElem - 4) 0x00        ... 0x00
+  ;; <--- i32 nElem ---> s0   s1   ... s(nElem - 4) 0x00        ... 0x00
 
   ;; BOUNDS CHECKING IS FOR NERDS
 
