@@ -122,8 +122,13 @@ async function loadWasmUtils(importObject) {
       "finish:part2"
     ).duration;
     console.log(
-      `Part 2: ${part2result.toString()} (${(part2duration * 1000).toFixed(2)}us)`
+      `Part 2: ${part2result.toString()} (${(part2duration * 1000).toFixed(
+        2
+      )}us)`
     );
+
+    const buffer = new Uint8Array(wasmMemory.buffer, 0x10000);
+    console.log(buffer.slice(0, 0x80));
   } catch (error) {
     if (error.code === "ENOENT") {
       console.log("=== ERROR ===");
