@@ -67,7 +67,7 @@ async function loadWasmUtils(importObject) {
     const importObject = {
       js: {
         mem: wasmMemory,
-        putchar: (x) => console.log(x.toString()),
+        putchar: (x) => process.stdout.write(String.fromCharCode(x)),
       },
       global: {
         inputOffset: new WebAssembly.Global({ value: "i32" }, inputOffset),
@@ -84,15 +84,24 @@ async function loadWasmUtils(importObject) {
     ).instance.exports;
 
     // warmup
+    const oldLog = console.log;
+    const oldWrite = process.stdout.write;
+    console.log = () => {};
+    process.stdout.write = () => {};
     performance.mark("warmup:part1");
     for (let i = 0; i < 10; i++) part1();
     performance.mark("warmup:part1:complete");
+    console.log = oldLog;
+    process.stdout.write = oldWrite;
+
     const warmup1Duration = performance.measure(
       "",
       "warmup:part1",
       "warmup:part1:complete"
     ).duration;
     console.log(`Part 1 Warmup: ${(warmup1Duration * 1000).toFixed(2)}us`);
+
+    // execute part 1
     performance.mark("execute:part1");
     const part1result = part1();
     performance.mark("finish:part1");
@@ -104,15 +113,23 @@ async function loadWasmUtils(importObject) {
     console.log(
       `Part 1: ${part1result} (${(part1duration * 1000).toFixed(2)}us)`
     );
+
+    // warmup
+    console.log = () => {};
+    process.stdout.write = () => {};
     performance.mark("warmup:part2");
     for (let i = 0; i < 10; i++) part2();
     performance.mark("warmup:part2:complete");
+    console.log = oldLog;
+    process.stdout.write = oldWrite;
     const warmup2Duration = performance.measure(
       "",
       "warmup:part2",
       "warmup:part2:complete"
     ).duration;
     console.log(`Part 2 Warmup: ${(warmup2Duration * 1000).toFixed(2)}us`);
+
+    // execute part 2
     performance.mark("execute:part2");
     const part2result = part2();
     performance.mark("finish:part2");
@@ -126,9 +143,6 @@ async function loadWasmUtils(importObject) {
         2
       )}us)`
     );
-
-    const buffer = new Uint8Array(wasmMemory.buffer, 0x10000);
-    console.log(buffer.slice(0, 0x80));
   } catch (error) {
     if (error.code === "ENOENT") {
       console.log("=== ERROR ===");

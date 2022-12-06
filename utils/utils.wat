@@ -49,6 +49,55 @@
 
     local.get $r
   )
+  (func $strtol (export "strtol")
+    (param $strptr i32)
+    (param $strlen i32)
+    (result i32)
+    (local $i i32)
+    (local $r i32)
+
+    ;; init to 0
+    i32.const 0
+    local.set $r
+
+    (block
+      (loop
+        ;; branch if i >= strlen
+        local.get $i
+        local.get $strlen
+        i32.ge_s
+        br_if 1
+
+        ;; multiply r by 10
+        local.get $r
+        i32.const 10
+        i32.mul
+
+        ;; get the ascii byte at position i
+        local.get $strptr
+        local.get $i
+        i32.add
+        i32.load8_u
+
+        ;; convert to single int by subtracting str[i] - 0x30
+        i32.const 0x30
+        i32.sub
+
+        ;; add to r
+        i32.add
+        local.set $r
+
+        ;; increment i
+        i32.const 1
+        local.get $i
+        i32.add
+        local.set $i
+        br 0
+      )
+    )
+
+    local.get $r
+  )
   (func $strchr (export "strchr")
     (param $str i32)
     (param $char i32)
