@@ -67,6 +67,7 @@ async function loadWasmUtils(importObject) {
     const importObject = {
       js: {
         mem: wasmMemory,
+        printint: (x, radix = 10) => console.log(x.toString(radix)),
         putchar: (x) => process.stdout.write(String.fromCharCode(x)),
       },
       global: {
@@ -143,6 +144,9 @@ async function loadWasmUtils(importObject) {
         2
       )}us)`
     );
+
+    // const buffer = new Uint32Array(wasmMemory.buffer, 0x10000);
+    // console.log([...buffer.slice(0, 4)].map((x) => x.toString(2)));
   } catch (error) {
     if (error.code === "ENOENT") {
       console.log("=== ERROR ===");
