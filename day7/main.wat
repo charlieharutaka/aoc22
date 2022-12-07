@@ -6,11 +6,13 @@
   (global $inputLength (import "global" "inputLength") i32)
   (global $tableOffset i32 (i32.const 0x10000)) ;; start directory table at 0x10000
   (global $tableEntrySize i32 (i32.const 0x20)) ;; the size of a directory entry
-  ;; each directory entry is 32 bytes long:
-  ;; 0x00..0x0D | 0x0E..0x1B  | 0x1C...0x1F
-  ;; dir name   | parent name | dir size i32
+  ;; each directory entry is 48 bytes long:
+  ;; 0x00..0x0F | 0x10..0x1F  | 0x20..0x23   | 0x24.. 0x30
+  ;; dir name   | parent name | dir size i32 | padding for alignment
   (global $tableNEntries (mut i32) (i32.const 0)) ;; mutable number of entries
   ;; add a directory to the table with 0 size
+  (data (i32.const 0) "test")
+  (data (i32.const 4) "abcd")
   (func $addDirectory
     (param $dirName i32)        ;; directory name pointer
     (param $dirNameLen i32)     ;; directory name length
@@ -30,15 +32,19 @@
     local.set $offset
 
     ;; then copy over our directory name
-    ;; first determine the loop limit, lim = min(dirNameLen, 0x0E)
+    ;; first determine the loop limit, lim = min(dirNameLen, 0x10)
     local.get $dirNameLen
-    i32.const 0x0E
+    i32.const 0x10
     local.get $dirNameLen
-    i32.const 0x0E
+    i32.const 0x10
     i32.lt_s
     select
     local.set $limit
+    
+    i32.const 0
+    local.set $i
 
+    ;; then loop to copy
     (block
       (loop
         ;; break
@@ -66,7 +72,86 @@
         i32.const 1
         i32.add
         local.set $i
+        br 0
       )
+      unreachable
     )
+
+    ;; then copy over our parent name
+    ;; first determine the loop limit, lim = min(parentNameLen, 0x10)
+    local.get $parentNameLen
+    i32.const 0x10
+    local.get $parentNameLen
+    i32.const 0x10
+    i32.lt_s
+    select
+    local.set $limit
+    
+    i32.const 0
+    local.set $i
+
+    ;; then loop to copy
+    (block
+      (loop
+        ;; break
+        local.get $i
+        local.get $limit
+        i32.ge_u
+        br_if 1
+
+        ;; prepare destination address
+        local.get $offset
+    i32.const 0x10
+        local.get $i
+        i32.add
+        i32.add
+
+        ;; load char
+        local.get $parentName
+        local.get $i
+        i32.add
+        i32.load8_u
+
+        ;; store it
+        i32.store8
+
+        ;; loop
+        local.get $i
+        i32.const 1
+        i32.add
+        local.set $i
+        br 0
+      )
+      unreachable
+    )
+
+    ;; make sure 0x20-0x24 are 0
+    i32.const 0x20
+    local.get $offset
+    i32.add
+    i32.const 0
+    i32.store
+
+    ;; table index is nEntries
+    global.get $tableNEntries
+
+    ;; increment nEntries
+    global.get $tableNEntries
+    i32.const 1
+    i32.add
+    global.set $tableNEntries
+  )
+  (func (export "part1") (result i32)
+    i32.const 0
+    i32.const 4
+    i32.const 4
+    i32.const 4
+    call $addDirectory
+
+    i32.const 0
+    global.set $tableNEntries
+  )
+  (func (export "part2") (result i32)
+    i32.const 0
   )
 )
