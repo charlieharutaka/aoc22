@@ -51,7 +51,7 @@
     ;;           <A>  s
     ;;      <---B-->  e
     ;; <-----C----->  t
-    
+
     (local $a i32)
     (local $b i32)
     (local $c i32)

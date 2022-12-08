@@ -146,7 +146,7 @@ async function loadWasmUtils(importObject) {
     );
 
     const buffer = new Uint8Array(wasmMemory.buffer, 0x10000);
-    console.log([...buffer.slice(0, 0x30)].map((x) => String.fromCharCode(x)));
+    console.log([...buffer.slice(0, 0x20)].map((x) => String.fromCharCode(x)));
   } catch (error) {
     if (error.code === "ENOENT") {
       console.log("=== ERROR ===");
